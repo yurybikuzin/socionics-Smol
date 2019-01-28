@@ -1,105 +1,26 @@
 
 namespace $.$$ {
 
-  function uri(obj : any, args : any) : string {
-    const page = obj.$.$mol_state_arg.value( 'page' ) || 'tn'
-    const tn = obj.$.$mol_state_arg.value( 'tn' )
-    const urlParams = { page, tn, ...args }
-    let result = '#'
-    let items : string[] = []
-    if (urlParams.page == 'tn') delete urlParams.page
-    Object.keys(urlParams).forEach(param => {
-      if (urlParams[param]) {
-        items.push(param + '=' + urlParams[param])
-      }
-    })
-    return !items.length ? '' : '#' + items.join('&')
-  }
+  // function uri(obj : any, args : any) : string {
+  //   const page = obj.$.$mol_state_arg.value( 'page' ) || 'tn'
+  //   const tn = obj.$.$mol_state_arg.value( 'tn' )
+  //   const urlParams = { page, tn, ...args }
+  //   let result = '#'
+  //   let items : string[] = []
+  //   if (urlParams.page == 'tn') delete urlParams.page
+  //   Object.keys(urlParams).forEach(param => {
+  //     if (urlParams[param]) {
+  //       items.push(param + '=' + urlParams[param])
+  //     }
+  //   })
+  //   return !items.length ? '' : '#' + items.join('&')
+  // }
 
   function selected_tn(obj : any) {
     return obj.$.$mol_state_arg.value( 'tn' ) || null
   }
 
-  export class $socionics extends $.$socionics {
-    pages_def() {
-      return {
-        'tn': { title: 'Соционические типы' },
-        'cp': { title: 'Соционические функции' },
-        'it': { title: 'Интертипные отношения' },
-        'ma': { title: 'Модель А для всех типов' },
-      }
-    }
-    selected_page() {
-      return this.$.$mol_state_arg.value( 'page' ) || 'tn'
-    }
-    selected_tn() {
-      return selected_tn(this)
-    }
-    // BUG:
-    // page_content() {
-    //   return (( obj )=>{
-    //     return obj
-    //   })( new this.$.['$socionics_page_' + this.current_page()] )
-    // }
-    page_content() {
-      switch (this.selected_page()) {
-        case 'cp': return this.PageCp()
-        case 'it': return this.PageIt()
-        case 'ma': return this.PageMa()
-        default: return this.PageTn()
-      }
-    }
-  }
-
-  export class $socionics_page_control extends $.$socionics_page_control {
-
-    page_link(id : any) {
-      return this.pages_def()[id].title
-    }
-
-    page_links() {
-      const result = Object.keys(this.pages_def()).map((page : string) =>
-        this.PageLink(page)
-      )
-      return result
-    }
-
-    uri(id : any) {
-      // return '#page=' + id
-      return uri(this, {page: id})
-    }
-
-    is_current(id : any) {
-      return id == this.selected()
-    }
-  }
-
-  export class $socionics_tn_description extends $.$socionics_tn_description {
-    description() {
-      return this.selected_tn()
-    }
-    selected_tn() {
-      return selected_tn(this)
-    }
-  }
-
-  export class $socionics_page_tn extends $.$socionics_page_tn {
-    cells() {
-      let result : any[] = [ this.TnTableCell() ]
-      if (this.selected_tn()) {
-        result.push(this.TnDescriptionCell())
-      }
-      return result
-      // return [ this.TnTable() ].concat( !this.selected_tn() ? [] : this.TnDescription() )
-    }
-    selected_tn() {
-      return selected_tn(this)
-    }
-  }
-
-  export class $socionics_tn_table extends $.$socionics_tn_table {
-
-    quadra_def() {
+  function quadra_def() {
       return {
         'I': {
           'P': {
@@ -143,6 +64,122 @@ namespace $.$$ {
         },
       }
     }
+  }
+
+  // @ $mol_mem
+  function tn_def() {
+    let result = {}
+    Object.keys(quadra_def()).forEach((quadra) => {
+      Object.keys(quadra_def()[quadra]).forEach((pj, pjDef) => {
+        pjDef.forEach((ei, eiDef) => {
+          result[eiDef.code] = { title: eiDef.title, idx: eiDef.idx }
+        })
+      })
+    });
+    return result
+  }
+
+  export class $socionics extends $.$socionics {
+    pages_def() {
+      return {
+        'tn': { title: 'Соционические типы' },
+        'cp': { title: 'Соционические функции' },
+        'it': { title: 'Интертипные отношения' },
+        'ma': { title: 'Модель А для всех типов' },
+      }
+    }
+    selected_page() {
+      return this.$.$mol_state_arg.value( 'page' ) || 'tn'
+    }
+    selected_tn() {
+      return selected_tn(this)
+    }
+    // BUG:
+    // page_content() {
+    //   return (( obj )=>{
+    //     return obj
+    //   })( new this.$.['$socionics_page_' + this.current_page()] )
+    // }
+    page_content() {
+      switch (this.selected_page()) {
+        case 'cp': return this.PageCp()
+        case 'it': return this.PageIt()
+        case 'ma': return this.PageMa()
+        default: return this.PageTn()
+      }
+    }
+
+    socionics_title() {
+      return this.pages_def()[this.selected_page()].title
+    }
+  }
+
+  export class $socionics_page_control extends $.$socionics_page_control {
+
+    page_link(id : any) {
+      return this.pages_def()[id].title
+    }
+
+    page_links() {
+      return Object.keys(this.pages_def()).map((page : string) => this.PageLink(page))
+    }
+
+    arg(id : any) {
+      return {page: id}
+    }
+
+    is_current(id : any) {
+      return id == this.selected()
+    }
+  }
+
+  export class $socionics_tn_description extends $.$socionics_tn_description {
+    selected_tn() {
+      return selected_tn(this)
+    }
+    // description() {
+    //   return this.$.$mol_http.resource( 'desc/INFP-male.json' ).json() as string
+    // }
+
+    title() {
+      return tn_def()[this.selected_tn()].title
+    }
+
+    inner_html() {
+      return {innerHTML: this.$.$mol_http.resource( 'desc/INFP-male.json' ).json() as string}
+    }
+    // Description() {
+    //   const json = this.$.$mol_http.resource( 'desc/INFP-male.json' ).json()
+    //   // let view = new this.$.$mol_view
+    //   let view = (( obj )=>{
+    //     obj.dom_name = () => "div"
+    //     // obj.sub = () => [].concat( this.TnDescription() )
+    //     return obj
+    //   })( new this.$.$mol_view )
+    //   // view.dom_name('div')
+    //   // const elem = document.createElement('div')
+    //   // elem.innerHTML = json as string
+    //   // view.dom_node(elem)
+    //   view.dom_node().innerHTML = json as string
+    //   return view
+    // }
+  }
+
+  export class $socionics_page_tn extends $.$socionics_page_tn {
+    cells() {
+      let result : any[] = [ this.TnTableCell() ]
+      if (this.selected_tn()) {
+        result.push(this.TnDescriptionCell())
+      }
+      // console.log('cells', {result})
+      return result
+    }
+    selected_tn() {
+      return selected_tn(this)
+    }
+  }
+
+  export class $socionics_tn_table extends $.$socionics_tn_table {
 
     pj_def() {
       return {
@@ -164,44 +201,31 @@ namespace $.$$ {
 
     body() {
       let result : any[] = []
-      console.log('body')
-      Object.keys(this.quadra_def()).forEach((quadra: string) => {
+      Object.keys(quadra_def()).forEach((quadra: string) => {
         result = result.concat(
           this.QuadraHeader(quadra)
         ).concat(
-          Object.keys(this.pj_def()).map((pj: string) => this.Quadra({quadra, pj}))
+          Object.keys(this.pj_def()).map((pj: string) => this.QuadraRow({quadra, pj}))
         )
-        console.log({quadra, result})
       })
-      console.log('body', {result})
       return result
     }
 
     quadra_header_sub(quadra : string) {
-      console.log('quadra_header_sub', {quadra})
       const result = [
         this.QuadraCaption(quadra)
       ].concat(
         Object.keys(this.ei_def()).map((ei : string) => this.EiCaption({quadra, ei}))
       )
-      console.log('quadra_header_sub', {quadra, result})
       return result
     }
 
     quadra_caption(quadra : string) {
-      console.log('quadra_caption', {quadra})
       return quadra + ' квадра'
     }
 
-    // ei_headers(quadra : string) {
-    //   return Object.keys(this.ei_def()).map((ei : string) => this.EiHeader(ei))
-    // }
-
     ei_title(quadra_ei : any) {
-      const {ei} = quadra_ei
-      const result = this.ei_def()[ei].title
-      console.log('ei_title', {ei, result})
-      return result
+      return this.ei_def()[quadra_ei.ei].title
     }
 
     pj_title(quadra_pj : any) {
@@ -211,19 +235,17 @@ namespace $.$$ {
 
     ei_cells( quadra_pj : any ) {
       let result = Object.keys(this.ei_def()).map((ei : string) => this.EiCell({ei, ...quadra_pj}))
-      console.log({result})
       return result
     }
 
     ei_cell_link_title(quadra_pj_ei : any) {
       const {quadra, pj, ei} = quadra_pj_ei
-      return this.quadra_def()[quadra][pj][ei].title
+      return quadra_def()[quadra][pj][ei].title
     }
 
-    ei_cell_link_uri(quadra_pj_ei : any) {
+    ei_cell_link_arg(quadra_pj_ei : any) {
       const {quadra, pj, ei} = quadra_pj_ei
-      // return '#tn=' + this.quadra_def()[quadra][pj][ei].code
-      return uri(this, {tn: this.quadra_def()[quadra][pj][ei].code})
+      return {tn: quadra_def()[quadra][pj][ei].code}
     }
 
     selected_tn() {
@@ -232,7 +254,7 @@ namespace $.$$ {
 
     is_current(quadra_pj_ei : any) {
       const {quadra, pj, ei} = quadra_pj_ei
-      return this.quadra_def()[quadra][pj][ei].code == this.selected_tn()
+      return quadra_def()[quadra][pj][ei].code == this.selected_tn()
     }
   }
 

@@ -156,3 +156,63 @@ a, a:visited {
   margin-left: -4px;
 }
 
+/*
+
+MainPackage->c['Описание соционического типа']
+
+  a8 => ${}
+  a9 => ${caption}
+  a10 => ${Источник}
+
+*/
+
+  [socionics_tn_description] {
+    white-space: normal;
+    padding: 0px 40px 5px;
+    margin-top: 10px;
+    min-width: 200px;
+    max-width: 600px;
+    min-height: 100px;
+    color: #555;
+    line-height: 16px;
+    white-space: normal;
+  }
+
+  [socionics_tn_description_header] {
+    font-size: 16pt;
+    margin: 20px 0 18px -2px;
+  }
+
+/*
+
+MainPackage->c['Гендерный портрет соционического типа']
+
+  a12 => ${}
+  a13 => ${=example}
+  a14 => ${sex}
+
+*/
+
+.a12 {
+  max-width: 600px;
+}
+
+  .a12 :global(p) {
+    margin: 10px 0;
+  }
+
+p.a13 {
+  padding: 5px 30px 5px 40px;
+  margin-top: 0;
+  margin-bottom: 0;
+  background-color: #FFFFE0;
+}
+
+.a14 * {
+  margin-right: 6px;
+}
+
+.a14 span {
+  font-weight: bold;
+  color: black;
+}
