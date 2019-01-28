@@ -1,0 +1,121 @@
+$socionics $mol_view
+	sub /
+		<= PageControl $socionics_page_control
+			pages_def <= pages_def *
+			selected <= selected_page \
+			page_content <= page_content null
+	PageTn $socionics_page_tn
+	PageCp $socionics_page_cp
+	PageIt $socionics_page_it
+	PageMa $socionics_page_ma
+
+$socionics_page_tn $mol_view
+	dom_name \table
+	sub /
+		<= Body $mol_view
+			dom_name \tbody
+			sub /
+				<= Row $mol_view
+					dom_name \tr
+					sub / <= cells /
+	TnTableCell $mol_view
+		dom_name \td
+		sub / <= TnTable $socionics_tn_table
+	TnDescriptionCell $mol_view
+		dom_name \td
+		sub / <= TnDescription $socionics_tn_description
+
+$socionics_tn_description $mol_view
+	sub /
+		<= Header $mol_view
+			dom_name \h1
+			sub / <= title \
+		<= Description $mol_view
+			sub / <= description
+
+$socionics_tn_table $mol_view
+	dom_name \table
+	sub /
+		<= ColGroup $mol_view
+			dom_name \colgroup
+			sub / <= cols /
+		<= Body $mol_view
+			dom_name \tbody
+			sub <= body /
+	-
+	Col!idx $mol_view
+		dom_name \col
+	QuadraHeader!quadra $mol_view
+		dom_name \tr
+		sub <= quadra_header_sub!quadra /
+	-
+	QuadraCaption!quadra $mol_view
+		dom_name \td
+		sub /
+			<= quadra_caption!quadra \
+	- BUG: EiCaption!ei!$mol_view
+	EiCaption!quadra_ei $mol_view
+		dom_name \td
+		sub /
+			<= ei_title!quadra_ei \
+	-
+	Quadra!quadra_pj $mol_view
+		dom_name \tr
+		sub /
+			<= Cell!quadra_pj $mol_view
+				dom_name \td
+				sub /
+					<= pj_title!quadra_pj \
+					<= pj_ei_cells!quadra_pj /
+			<= ei_cells!quadra_pj /
+	- BUG: EiCell!quadra!pj!ei $mol_view
+	EiCell!quadra_pj_ei $mol_view
+		dom_name \td
+		sub / <= EiCellLink!quadra_pj_ei $mol_link
+			title <= ei_cell_link_title!quadra_pj_ei \
+			uri <= ei_cell_link_uri!quadra_pj_ei \
+			current <= is_current!quadra_pj_ei false
+
+$socionics_page_cp $mol_view
+	sub / \cp
+
+$socionics_page_it $mol_view
+	sub / \it
+
+$socionics_page_ma $mol_view
+	sub / \ma
+
+$socionics_page_control $mol_view
+	dom_name \table
+	pages_def *
+	selected \
+	-
+	sub /
+		<= Head $mol_view
+			dom_name \thead
+			sub /
+				<= HeadRow $mol_view
+					dom_name \tr
+					sub /
+						<= HeadRowCell $mol_view
+							dom_name \th
+							sub /
+								<= page_links /
+		<= Body $mol_view
+			dom_name \tbody
+			sub /
+				<= BodyRow $mol_view
+					dom_name \tr
+					sub /
+						<= BodyRowCell $mol_view
+							dom_name \td
+							sub /
+								<= page_content null
+	-
+	PageLink!id $mol_link
+		uri <= uri!id \
+		title <= page_link!id \
+		current <= is_current!id false
+
+
+

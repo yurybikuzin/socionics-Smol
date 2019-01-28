@@ -1,0 +1,95 @@
+%YAML 1.2
+---
+name: Tree
+file_extensions: [ tree ]
+scope: source.tree
+variables:
+  any: '(?=.)'
+
+contexts:
+  illegalInclude:
+    - meta_include_prototype: false
+    - match: .
+      scope: invalid.illegal.tree
+
+  comment:
+    - match: ^\t+
+    - match: '\t'
+      scope: invalid.illegal.tree
+    - match: .
+      scope: comment.tree
+
+  main:
+    - match: ^(\t*)-(\s|$)
+      scope: comment.tree
+      embed: comment
+      escape: ^(?!\1\t)
+    - match: (^\$[\w\$][\w\d\$]*)
+      scope: entity.name.class.tree
+      set: spaceOrEnd
+    - match: '^\t+([ ]*)'
+      captures:
+        1: invalid.illegal.tree
+      set: lineItem
+    - include: illegalInclude
+
+  spaceOrEnd:
+    - include: spaceOrEndInclude
+    - include: illegalInclude
+
+  spaceOrEndInclude:
+    - match: '[ ]+'
+      set: lineItem
+    - match: '$'
+      set: main
+
+  lineItem:
+    - match: '$'
+      set: main
+    - match: '\s+'
+    - match: (\$[\w\$][\w\d\$]*)
+      scope: support.class.tree
+      set: spaceOrEnd
+    - match: (true|false|null)\b
+      scope: constant.language.tree
+      set: spaceOrEnd
+    - match: ([\w\$][\w\d\$]*)
+      scope: meta.property.object.js
+      set: requiredArgOptional
+    - match: (/|\*|\@|<=>|<=|\^)
+      scope: keyword.tree
+      set: spaceOrEnd
+    - include: literalInclude
+    - include: accessorInclude
+    - include: localizationStarterInclude
+    - include: illegalInclude
+
+  requiredArgOptional:
+    - match: '(!)([\w]+)'
+      captures:
+        1: keyword.tree
+        2: variable.parameter.tree
+      set: optionalArgOptional
+    - include: optionalArgOptionalInclude
+    - include: spaceOrEndInclude
+    - include: illegalInclude
+
+  optionalArgOptionalInclude:
+    - match: '(\?)([\w]+)'
+      captures:
+        1: keyword.tree
+        2: variable.parameter.tree
+      set: spaceOrEnd
+
+  optionalArgOptional:
+    - include: optionalArgOptionalInclude
+    - include: spaceOrEndInclude
+    - include: illegalInclude
+
+  literalInclude:
+    - match: (\\)(.*)$
+      scope: string.unquoted.tree
+      set: main
+
+
+
