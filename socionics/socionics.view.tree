@@ -34,7 +34,7 @@ $socionics_tn_description $mol_view
 			sub / <= title \
 		<= Description $mol_view
 			dom_name \div
-			- plugins /
+			plugins /
 				<= InnerHtml $mol_plugin
 					attr_static <= inner_html *
 

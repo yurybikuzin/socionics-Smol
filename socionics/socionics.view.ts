@@ -64,14 +64,16 @@ namespace $.$$ {
         },
       }
     }
-  }
 
   // @ $mol_mem
   function tn_def() {
     let result = {}
-    Object.keys(quadra_def()).forEach((quadra) => {
-      Object.keys(quadra_def()[quadra]).forEach((pj, pjDef) => {
-        pjDef.forEach((ei, eiDef) => {
+    Object.keys(quadra_def()).forEach((quadra : string) => {
+      const quadraDef = quadra_def()[quadra]
+      Object.keys(quadraDef).forEach((pj : string) => {
+        const pjDef = quadraDef[pj]
+        Object.keys(pjDef).forEach((ei) => {
+          const eiDef = pjDef[ei]
           result[eiDef.code] = { title: eiDef.title, idx: eiDef.idx }
         })
       })
