@@ -31,12 +31,25 @@ $socionics_tn_description $mol_view
 	sub /
 		<= Header $mol_view
 			dom_name \h1
-			sub / <= title \
-		<= Description $mol_view
+			sub / <= header \
+		<= SexSelectors $mol_view
 			dom_name \div
-			plugins /
-				<= InnerHtml $mol_plugin
-					attr_static <= inner_html *
+			sub <= sex_selectors /
+		<= Content $socionics_tn_description_content
+	SexSelector!sex $mol_link
+		title <= sex_selector_title!sex \
+		arg <= sex_selector_arg!sex *
+		current <= is_current_sex_selector!sex false
+
+$socionics_tn_description_content $mol_view
+	dom_name \div
+	sub <= sub_content /
+	- plugins /
+		<= InnerHtml $mol_plugin
+			attr_static <= attrs *
+	- Patches:
+		\mol/dom/render/render.ts:
+		\92: if (name == 'innerHTML') { el.innerHTML = val } else
 
 $socionics_tn_table $mol_view
 	dom_name \table

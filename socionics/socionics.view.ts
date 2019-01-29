@@ -20,50 +20,65 @@ namespace $.$$ {
     return obj.$.$mol_state_arg.value( 'tn' ) || null
   }
 
+  function selected_sex(obj : any) {
+    return obj.$.$mol_state_arg.value( 'sex' ) || 'male'
+  }
+
+  function selected_page(obj : any) {
+    return obj.$.$mol_state_arg.value( 'page' ) || 'tn'
+  }
+
   function quadra_def() {
-      return {
-        'I': {
-          'P': {
-            'E': { code: 'ENTP', title: "Дон Кихот", idx: 0 },
-            'I': { code: 'ISFP', title: "Дюма", idx: 1 },
-          },
-          'J': {
-            'E': { code: 'ESFJ', title: 'Гюго', idx: 2 },
-            'I': { code: 'INTJ', title: 'Робеспьер', idx: 3 },
-          },
+    return {
+      'I': {
+        'P': {
+          'E': { code: 'ENTP', title: "Дон Кихот", idx: 0 },
+          'I': { code: 'ISFP', title: "Дюма", idx: 1 },
         },
-        'II': {
-          'P': {
-            'E': { code: 'ESTP', title: "Жуков", idx: 4 },
-            'I': { code: 'INFP', title: "Есенин", idx: 5 },
-          },
-          'J': {
-            'E': { code: 'ENFJ', title: 'Гамлет', idx: 6 },
-            'I': { code: 'ISTJ', title: 'Максим', idx: 7 },
-          },
+        'J': {
+          'E': { code: 'ESFJ', title: 'Гюго', idx: 2 },
+          'I': { code: 'INTJ', title: 'Робеспьер', idx: 3 },
         },
-        'III': {
-          'P': {
-            'E': { code: 'ESFP', title: "Наполеон", idx: 8 },
-            'I': { code: 'INTP', title: "Бальзак", idx: 9 },
-          },
-          'J': {
-            'E': { code: 'ENTJ', title: 'Джек', idx: 10 },
-            'I': { code: 'ISFJ', title: 'Драйзер', idx: 11 },
-          },
+      },
+      'II': {
+        'P': {
+          'E': { code: 'ESTP', title: "Жуков", idx: 4 },
+          'I': { code: 'INFP', title: "Есенин", idx: 5 },
         },
-        'IV': {
-          'P': {
-            'E': { code: 'ENFP', title: "Гексли", idx: 12 },
-            'I': { code: 'ISTP', title: "Габен", idx: 13 },
-          },
-          'J': {
-            'E': { code: 'ESTJ', title: 'Штирлиц', idx: 14 },
-            'I': { code: 'INFJ', title: 'Достоевский', idx: 15 },
-          },
+        'J': {
+          'E': { code: 'ENFJ', title: 'Гамлет', idx: 6 },
+          'I': { code: 'ISTJ', title: 'Максим', idx: 7 },
         },
-      }
+      },
+      'III': {
+        'P': {
+          'E': { code: 'ESFP', title: "Наполеон", idx: 8 },
+          'I': { code: 'INTP', title: "Бальзак", idx: 9 },
+        },
+        'J': {
+          'E': { code: 'ENTJ', title: 'Джек', idx: 10 },
+          'I': { code: 'ISFJ', title: 'Драйзер', idx: 11 },
+        },
+      },
+      'IV': {
+        'P': {
+          'E': { code: 'ENFP', title: "Гексли", idx: 12 },
+          'I': { code: 'ISTP', title: "Габен", idx: 13 },
+        },
+        'J': {
+          'E': { code: 'ESTJ', title: 'Штирлиц', idx: 14 },
+          'I': { code: 'INFJ', title: 'Достоевский', idx: 15 },
+        },
+      },
     }
+  }
+
+  function sex_def() {
+    return {
+      'male': { title: 'Мужской портрет'},
+      'female': { title: 'Женский портрет'},
+    }
+  }
 
   // @ $mol_mem
   function tn_def() {
@@ -91,10 +106,7 @@ namespace $.$$ {
       }
     }
     selected_page() {
-      return this.$.$mol_state_arg.value( 'page' ) || 'tn'
-    }
-    selected_tn() {
-      return selected_tn(this)
+      return selected_page(this)
     }
     // BUG:
     // page_content() {
@@ -127,7 +139,7 @@ namespace $.$$ {
     }
 
     arg(id : any) {
-      return {page: id}
+      return {page: (id == 'tn' ? null : id) }
     }
 
     is_current(id : any) {
@@ -135,49 +147,53 @@ namespace $.$$ {
     }
   }
 
+  export class $socionics_tn_description_content extends $.$socionics_tn_description_content {
+    // attrs() {
+    //   const uri = 'desc/' + selected_tn(this) + '-' + selected_sex(this) + '.html'
+    //   const result = {
+    //     innerHTML: this.$.$mol_http.resource(uri).text() as string
+    //   }
+    //   return result
+    // }
+    sub_content() {
+      const uri = 'desc/' + selected_tn(this) + '-' + selected_sex(this) + '.html'
+      const html = this.$.$mol_http.resource(uri).text() as string
+      const div = document.createElement('div')
+      div.innerHTML = html
+      let result : any[] = []
+      div.childNodes.forEach((node : Node) => {
+        result.push(node)
+      })
+      console.log({html, div, result})
+      return result
+    }
+  }
+
   export class $socionics_tn_description extends $.$socionics_tn_description {
-    selected_tn() {
-      return selected_tn(this)
+    header() {
+      return tn_def()[selected_tn(this)].title
     }
-    // description() {
-    //   return this.$.$mol_http.resource( 'desc/INFP-male.json' ).json() as string
-    // }
-
-    title() {
-      return tn_def()[this.selected_tn()].title
+    sex_selectors() {
+      return Object.keys(sex_def()).map((sex : string) => this.SexSelector(sex))
     }
-
-    inner_html() {
-      return {innerHTML: this.$.$mol_http.resource( 'desc/INFP-male.json' ).json() as string}
+    sex_selector_title(sex : any) {
+      return sex_def()[sex].title
     }
-    // Description() {
-    //   const json = this.$.$mol_http.resource( 'desc/INFP-male.json' ).json()
-    //   // let view = new this.$.$mol_view
-    //   let view = (( obj )=>{
-    //     obj.dom_name = () => "div"
-    //     // obj.sub = () => [].concat( this.TnDescription() )
-    //     return obj
-    //   })( new this.$.$mol_view )
-    //   // view.dom_name('div')
-    //   // const elem = document.createElement('div')
-    //   // elem.innerHTML = json as string
-    //   // view.dom_node(elem)
-    //   view.dom_node().innerHTML = json as string
-    //   return view
-    // }
+    sex_selector_arg(sex : any) {
+      return { sex: sex == 'male' ? null : sex }
+    }
+    is_current_sex_selector(sex : any) {
+      return sex == selected_sex(this)
+    }
   }
 
   export class $socionics_page_tn extends $.$socionics_page_tn {
     cells() {
       let result : any[] = [ this.TnTableCell() ]
-      if (this.selected_tn()) {
+      if (selected_tn(this)) {
         result.push(this.TnDescriptionCell())
       }
-      // console.log('cells', {result})
       return result
-    }
-    selected_tn() {
-      return selected_tn(this)
     }
   }
 
@@ -250,13 +266,9 @@ namespace $.$$ {
       return {tn: quadra_def()[quadra][pj][ei].code}
     }
 
-    selected_tn() {
-      return selected_tn(this)
-    }
-
     is_current(quadra_pj_ei : any) {
       const {quadra, pj, ei} = quadra_pj_ei
-      return quadra_def()[quadra][pj][ei].code == this.selected_tn()
+      return quadra_def()[quadra][pj][ei].code == selected_tn(this)
     }
   }
 
