@@ -164,10 +164,9 @@ namespace $.$$ {
     }
   }
 
-  function description_content(obj : any) {
-    // console.log('$socionics_description')
-    const uri = obj.content_uri()
-    const html = obj.$.$mol_http.resource(uri).text() as string
+  $.$socionics_description.prototype.content = function() {
+    const uri = this.content_uri()
+    const html = this.$.$mol_http.resource(uri).text() as string
     const div = document.createElement('div')
     div.innerHTML = html
     let result : any[] = []
@@ -177,27 +176,7 @@ namespace $.$$ {
     return result
   }
 
-  export class $socionics_description extends $.$socionics_description {
-    content() {
-      return description_content(this)
-      // console.log('$socionics_description')
-      // const uri = this.content_uri()
-      // const html = this.$.$mol_http.resource(uri).text() as string
-      // const div = document.createElement('div')
-      // div.innerHTML = html
-      // let result : any[] = []
-      // div.childNodes.forEach((node : Node) => {
-      //   result.push(node)
-      // })
-      // return result
-    }
-  }
-
   export class $socionics_tn_description extends $.$socionics_tn_description {
-    content() {
-      return description_content(this)
-      // return super.content()
-    }
     sex_selectors() {
       return Object.keys(sex_def()).map((sex : string) => this.SexSelector(sex))
     }
