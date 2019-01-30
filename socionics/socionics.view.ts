@@ -1,23 +1,12 @@
 
 namespace $.$$ {
 
-  // function uri(obj : any, args : any) : string {
-  //   const page = obj.$.$mol_state_arg.value( 'page' ) || 'tn'
-  //   const tn = obj.$.$mol_state_arg.value( 'tn' )
-  //   const urlParams = { page, tn, ...args }
-  //   let result = '#'
-  //   let items : string[] = []
-  //   if (urlParams.page == 'tn') delete urlParams.page
-  //   Object.keys(urlParams).forEach(param => {
-  //     if (urlParams[param]) {
-  //       items.push(param + '=' + urlParams[param])
-  //     }
-  //   })
-  //   return !items.length ? '' : '#' + items.join('&')
-  // }
-
   function selected_tn(obj : any) {
     return obj.$.$mol_state_arg.value( 'tn' ) || null
+  }
+
+  function selected_cp(obj : any) {
+    return obj.$.$mol_state_arg.value( 'cp' ) || null
   }
 
   function selected_sex(obj : any) {
@@ -26,6 +15,10 @@ namespace $.$$ {
 
   function selected_page(obj : any) {
     return obj.$.$mol_state_arg.value( 'page' ) || 'tn'
+  }
+
+  function has_selection(obj : any) {
+    return !!selected_tn(obj)
   }
 
   function quadra_def() {
@@ -126,6 +119,30 @@ namespace $.$$ {
     socionics_title() {
       return this.pages_def()[this.selected_page()].title
     }
+
+    drop_args() {
+      return {
+        tn: null as any,
+        sex: null as any,
+      }
+    }
+    is_hidden() {
+      return !has_selection(this)
+    }
+    show_description_tn() {
+      return !!selected_tn(this)
+    }
+    show_description_cp() {
+      return !!selected_cp(this)
+    }
+    tn_description_header() {
+      return tn_def()[selected_tn(this)].title
+    }
+    tn_description_content_uri() {
+      const result = 'desc/' + selected_tn(this) + '-' + selected_sex(this) + '.html'
+      console.log('tn_description_content_uri', {result})
+      return result
+    }
   }
 
   export class $socionics_page_control extends $.$socionics_page_control {
@@ -147,31 +164,39 @@ namespace $.$$ {
     }
   }
 
-  export class $socionics_tn_description_content extends $.$socionics_tn_description_content {
-    // attrs() {
-    //   const uri = 'desc/' + selected_tn(this) + '-' + selected_sex(this) + '.html'
-    //   const result = {
-    //     innerHTML: this.$.$mol_http.resource(uri).text() as string
-    //   }
-    //   return result
-    // }
-    sub_content() {
-      const uri = 'desc/' + selected_tn(this) + '-' + selected_sex(this) + '.html'
-      const html = this.$.$mol_http.resource(uri).text() as string
-      const div = document.createElement('div')
-      div.innerHTML = html
-      let result : any[] = []
-      div.childNodes.forEach((node : Node) => {
-        result.push(node)
-      })
-      console.log({html, div, result})
-      return result
+  function description_content(obj : any) {
+    // console.log('$socionics_description')
+    const uri = obj.content_uri()
+    const html = obj.$.$mol_http.resource(uri).text() as string
+    const div = document.createElement('div')
+    div.innerHTML = html
+    let result : any[] = []
+    div.childNodes.forEach((node : Node) => {
+      result.push(node)
+    })
+    return result
+  }
+
+  export class $socionics_description extends $.$socionics_description {
+    content() {
+      return description_content(this)
+      // console.log('$socionics_description')
+      // const uri = this.content_uri()
+      // const html = this.$.$mol_http.resource(uri).text() as string
+      // const div = document.createElement('div')
+      // div.innerHTML = html
+      // let result : any[] = []
+      // div.childNodes.forEach((node : Node) => {
+      //   result.push(node)
+      // })
+      // return result
     }
   }
 
   export class $socionics_tn_description extends $.$socionics_tn_description {
-    header() {
-      return tn_def()[selected_tn(this)].title
+    content() {
+      return description_content(this)
+      // return super.content()
     }
     sex_selectors() {
       return Object.keys(sex_def()).map((sex : string) => this.SexSelector(sex))
@@ -187,11 +212,12 @@ namespace $.$$ {
     }
   }
 
-  export class $socionics_page_tn extends $.$socionics_page_tn {
+  export class $socionics_page extends $.$socionics_page {
     cells() {
-      let result : any[] = [ this.TnTableCell() ]
-      if (selected_tn(this)) {
-        result.push(this.TnDescriptionCell())
+      let result : any[] = [ this.TableCell() ]
+      // if (selected_tn(this)) {
+      if (this.show_description()) {
+        result.push(this.DescriptionCell())
       }
       return result
     }

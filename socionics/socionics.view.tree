@@ -1,16 +1,39 @@
 $socionics $mol_view
 	sub /
+		<= SelectionDropper $mol_view
+			dom_name \div
+			sub /
+				<= SelectionDropperLink $mol_link
+					title \убрать желтый цвет со страницы
+					arg <= drop_args *
+			attr *
+				nonvisible <= is_hidden true
 		<= PageControl $socionics_page_control
 			pages_def <= pages_def *
 			selected <= selected_page \
 			page_content <= page_content null
 	title <= socionics_title \
-	PageTn $socionics_page_tn
-	PageCp $socionics_page_cp
+	PageTn $socionics_page
+		show_description <= show_description_tn false
+		Table $socionics_tn_table
+		Description $socionics_tn_description
+			header <= tn_description_header \
+			content_uri <= tn_description_content_uri \
+	PageCp $socionics_page
+		show_description <= show_description_cp false
+		Table $socionics_cp_table
+		Description $socionics_cp_description
 	PageIt $socionics_page_it
 	PageMa $socionics_page_ma
 
-$socionics_page_tn $mol_view
+$socionics_cp_table $mol_view sub / \$socionics_cp_table
+$socionics_cp_description $mol_view sub / \$socionics_cp_description
+
+$socionics_page $mol_view
+	show_description false
+	Table null
+	Description null
+	-
 	dom_name \table
 	sub /
 		<= Body $mol_view
@@ -19,37 +42,37 @@ $socionics_page_tn $mol_view
 				<= Row $mol_view
 					dom_name \tr
 					sub / <= cells /
-	TnTableCell $mol_view
+	TableCell $mol_view
 		dom_name \td
-		sub / <= TnTable $socionics_tn_table
-	TnDescriptionCell $mol_view
+		sub / <= Table
+	DescriptionCell $mol_view
 		dom_name \td
-		sub / <= TnDescription $socionics_tn_description
+		sub / <= Description
 
-$socionics_tn_description $mol_view
+$socionics_description $mol_view
+	header \
+	content_uri \
+	-
 	dom_name \div
 	sub /
 		<= Header $mol_view
 			dom_name \h1
-			sub / <= header \
+			sub / <= header
+		<= Content $mol_view
+			dom_name \div
+			sub <= content /
+
+$socionics_tn_description $socionics_description
+	sub /
+		<= Header -
 		<= SexSelectors $mol_view
 			dom_name \div
 			sub <= sex_selectors /
-		<= Content $socionics_tn_description_content
+		<= Content -
 	SexSelector!sex $mol_link
 		title <= sex_selector_title!sex \
 		arg <= sex_selector_arg!sex *
 		current <= is_current_sex_selector!sex false
-
-$socionics_tn_description_content $mol_view
-	dom_name \div
-	sub <= sub_content /
-	- plugins /
-		<= InnerHtml $mol_plugin
-			attr_static <= attrs *
-	- Patches:
-		\mol/dom/render/render.ts:
-		\92: if (name == 'innerHTML') { el.innerHTML = val } else
 
 $socionics_tn_table $mol_view
 	dom_name \table
@@ -94,11 +117,7 @@ $socionics_tn_table $mol_view
 		sub / <= EiCellLink!quadra_pj_ei $mol_link
 			title <= ei_cell_link_title!quadra_pj_ei \
 			arg <= ei_cell_link_arg!quadra_pj_ei *
-			- uri <= ei_cell_link_uri!quadra_pj_ei \
 			current <= is_current!quadra_pj_ei false
-
-$socionics_page_cp $mol_view
-	sub / \cp
 
 $socionics_page_it $mol_view
 	sub / \it
@@ -119,7 +138,7 @@ $socionics_page_control $mol_view
 					dom_name \tr
 					sub /
 						<= HeadRowCell $mol_view
-							dom_name \th
+							dom_name \td
 							sub /
 								<= page_links /
 		<= Body $mol_view
@@ -134,7 +153,6 @@ $socionics_page_control $mol_view
 								<= page_content null
 	-
 	PageLink!id $mol_link
-		- uri <= uri!id \
 		arg <= arg!id *
 		title <= page_link!id \
 		current <= is_current!id false
