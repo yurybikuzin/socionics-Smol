@@ -73,18 +73,19 @@ a, a:visited {
   font-size: 12px;
 }
 
-[socionics_selectiondropper] {
+[socionics_selection_dropper] {
+  font-family: Tahoma, Verdana, sans-serif;
   margin: 0px;
   visibility: visible;
   text-align: center;
   font-size: 12px;
 }
 
-[socionics_selectiondropper][nonvisible] {
+[socionics_selection_dropper][nonvisible] {
   visibility: hidden;
 }
 
-[socionics_selectiondropperlink] {
+[socionics_selection_dropper_link] {
   background-color: yellow;
   font-weight: bold;
   padding: 2px 8px;
@@ -203,11 +204,11 @@ MainPackage->c['Описание соционического типа']
     margin: 20px 0 18px -2px;
   }
 
-[socionics_tn_description_sexselectors] [mol_link] {
+[socionics_tn_description_sexselector] [mol_link]:not(:last-child) {
   margin-right: 6px;
 }
 
-[socionics_tn_description_sexselectors] [mol_link_current] {
+[socionics_tn_description_sexselector] [mol_link_current] {
   font-weight: bold;
   color: black;
   background-color: inherit;
@@ -228,22 +229,116 @@ MainPackage->c['Гендерный портрет соционического �
   max-width: 600px;
 }
 
-  [socionics_tn_description_content] p {
-    margin: 10px 0;
-  }
+[socionics_description] p {
+  margin: 10px 0;
+}
 
-p.a13 {
+[socionics_description] p.a13 {
   padding: 5px 30px 5px 40px;
   margin-top: 0;
   margin-bottom: 0;
   background-color: #FFFFE0;
 }
 
-.a14 * {
+[socionics_description] .a14 * {
   margin-right: 6px;
 }
 
-.a14 span {
+[socionics_description] .a14 span {
   font-weight: bold;
   color: black;
+}
+
+[socionics_cp_table_cpicon] {
+  display: block;
+  height: 15px;
+  width: 15px;
+  background-image: url(../static/IEPFTRLS.gif);
+}
+
+[socionics_cp_table_cpicon][cp="Ne"] {
+  background-position: -0px top;
+}
+[socionics_cp_table_cpicon][cp="Ni"] {
+  background-position: -60px top;
+}
+[socionics_cp_table_cpicon][cp="Se"] {
+  background-position: -45px top;
+}
+[socionics_cp_table_cpicon][cp="Si"] {
+  background-position: -105px top;
+}
+[socionics_cp_table_cpicon][cp="Te"] {
+  background-position: -30px top;
+}
+[socionics_cp_table_cpicon][cp="Ti"] {
+  background-position: -90px top;
+}
+[socionics_cp_table_cpicon][cp="Fe"] {
+  background-position: -15px top;
+}
+[socionics_cp_table_cpicon][cp="Fi"] {
+  background-position: -75px top;
+}
+
+[socionics_pagecp] {
+  margin: 0px 18px 14px;
+}
+
+[socionics_cp_table] {
+  margin: 20px 30px 10px 0px;
+  width: 280px;
+}
+
+[socionics_cp_table] td {
+  padding-top: 4px ;
+  padding-bottom: 4px ;
+}
+
+[socionics_cp_table_rowspancell] {
+  font-size: 14px;
+  vertical-align: middle;
+  padding-left: 10px;
+}
+
+[socionics_cp_table_colgroup] :nth-child(1) {
+  width: 90px;
+}
+
+[socionics_cp_table_colgroup] :nth-child(3) {
+  width: 170px;
+}
+
+[socionics_cp_table_row] td {
+  vertical-align: top;
+}
+
+[socionics_cp_table_row] td[selected] {
+  font-weight: bold;
+  color: black;
+  background-color: yellow;
+}
+[socionics_cp_table_row] [mol_link_current] {
+  background-color: inherit;
+  color: inherit;
+}
+
+[socionics_cp_table_link] {
+  display: block;
+}
+
+[socionics_cp_description] {
+  padding: 0px 40px 5px;
+  margin-top: 10px;
+  min-width: 200px;
+  max-width: 400px;
+  min-height: 100px;
+  color: #555;
+  line-height: 16px;
+  white-space: normal;
+}
+
+[socionics_cp_description_header] {
+  font-size: 16pt;
+  margin: 18px 0 12px -2px;
 }

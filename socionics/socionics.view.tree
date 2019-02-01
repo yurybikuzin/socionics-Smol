@@ -1,18 +1,12 @@
 $socionics $mol_view
-	sub /
-		<= SelectionDropper $mol_view
-			dom_name \div
-			sub /
-				<= SelectionDropperLink $mol_link
-					title \убрать желтый цвет со страницы
-					arg <= drop_args *
-			attr *
-				nonvisible <= is_hidden true
-		<= PageControl $socionics_page_control
-			pages_def <= pages_def *
-			selected <= selected_page \
-			page_content <= page_content null
 	title <= socionics_title \
+	sub /
+		<= SelectionDropper $socionics_selection_dropper
+		<= PageControl $socionics_page_control
+			pages <= pages *
+			selected <= selected_page \
+			PageContent <= Page null
+	-
 	PageTn $socionics_page
 		show_description <= show_description_tn false
 		Table $socionics_tn_table
@@ -26,8 +20,18 @@ $socionics $mol_view
 	PageIt $socionics_page_it
 	PageMa $socionics_page_ma
 
-$socionics_cp_table $mol_view sub / \$socionics_cp_table
-$socionics_cp_description $mol_view sub / \$socionics_cp_description
+$socionics_selection_dropper $mol_view
+	dom_name \div
+	sub /
+		<= Link $mol_link
+			title \убрать желтый цвет со страницы
+			arg <= arg *
+	attr *
+		nonvisible <= nonvisible true
+
+
+- $socionics_cp_table $mol_view sub / \$socionics_cp_table
+- $mol_view sub / \$socionics_cp_description
 
 $socionics_page $mol_view
 	show_description false
@@ -52,7 +56,7 @@ $socionics_page $mol_view
 $socionics_description $mol_view
 	header \
 	content_uri \
-	-
+	- ---
 	dom_name \div
 	sub /
 		<= Header $mol_view
@@ -62,17 +66,66 @@ $socionics_description $mol_view
 			dom_name \div
 			sub <= content /
 
+$socionics_cp_description $socionics_description
+
 $socionics_tn_description $socionics_description
 	sub /
 		<= Header -
-		<= SexSelectors $mol_view
-			dom_name \div
-			sub <= sex_selectors /
+		<= SexSelector $socionics_sex_selector
 		<= Content -
-	SexSelector!sex $mol_link
+
+$socionics_sex_selector $mol_view
+	dom_name \div
+	sub <= items /
+	Item!sex $mol_link
 		title <= sex_selector_title!sex \
 		arg <= sex_selector_arg!sex *
 		current <= is_current_sex_selector!sex false
+
+$socionics_cp_table $mol_view
+	dom_name \table
+	sub /
+		<= ColGroup $mol_view
+			dom_name \colgroup
+			sub / <= cols /
+		<= Body $mol_view
+			dom_name \tbody
+			sub <= body /
+	-
+	Col!idx $mol_view
+		dom_name \col
+	Row!params $mol_view
+		dom_name \tr
+		sub / <= cells!params /
+	RowSpanCell!cp_group $mol_view
+		dom_name \td
+		attr *
+			rowspan 2
+		sub / <= cp_group_title!cp_group \
+	IconCell!cp $mol_view
+		dom_name \td
+		sub /
+			<= CpIcon!cp $socionics_cp_icon
+				cp <= icon_cp!cp \
+		attr *
+			selected <= is_current!cp
+	LinkCell!cp $mol_view
+		dom_name \td
+		sub /
+			<= Link!cp $mol_link
+				title <= cp_title!cp \
+				arg <= cp_arg!cp *
+				current <= is_current!cp
+		attr *
+			selected <= is_current!cp
+	is_current!cp false
+
+$socionics_cp_icon $mol_link
+	cp \
+	-
+	attr *
+		^
+		cp <= cp
 
 $socionics_tn_table $mol_view
 	dom_name \table
@@ -119,17 +172,52 @@ $socionics_tn_table $mol_view
 			arg <= ei_cell_link_arg!quadra_pj_ei *
 			current <= is_current!quadra_pj_ei false
 
-$socionics_page_it $mol_view
+- $socionics_page_it $mol_view
 	sub / \it
+
+$socionics_page_it $mol_view
+	dom_name \div
+	sub /
+		<= Top
+		<= Bottom null
+	Top $mol_view
+		dom_name \table
+		sub /
+			<= Body $mol_view
+				dom_name \tbody
+				sub /
+					<= Row $mol_view
+						dom_name \tr
+						sub /
+							<= ListCell $mol_view
+								dom_name \td
+								sub / <= List
+							<= TableCell $mol_view
+								dom_name \td
+								sub / <= Table
+	List $mol_view
+		dom_name \table
+		sub /
+			<= ColGroup $mol_view
+				dom_name \colgroup
+				sub <= cols /
+			<= ListBody $mol_view
+				dom_name \tbody
+				sub <= rows /
+	Table $socionics_tn_table
 
 $socionics_page_ma $mol_view
 	sub / \ma
 
 $socionics_page_control $mol_view
-	dom_name \table
-	pages_def *
+	pages *
+		- { PAGE_ID: {title: PAGE_TITLE} }
 	selected \
-	-
+		- PAGE_ID
+	PageContent null
+		- class extends $mol_view
+	- ---
+	dom_name \table
 	sub /
 		<= Head $mol_view
 			dom_name \thead
@@ -150,7 +238,7 @@ $socionics_page_control $mol_view
 						<= BodyRowCell $mol_view
 							dom_name \td
 							sub /
-								<= page_content null
+								<= PageContent
 	-
 	PageLink!id $mol_link
 		arg <= arg!id *
